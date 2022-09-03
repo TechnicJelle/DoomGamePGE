@@ -26,7 +26,7 @@ private:
 	float fFOV = 3.14159f / 4.0f;
 	float fDepth = 16.0f;
 
-	uint32_t nLayerBackground;
+	uint32_t nLayerBackground = 0;
 
 public:
 	bool OnUserCreate() override
@@ -127,7 +127,7 @@ public:
 				}
 			}
 
-			int nCeiling = (float)(ScreenHeight() / 2.0f) - ScreenHeight() / ((float)fDistanceToWall);
+			int nCeiling = (int)(((float)ScreenHeight() / 2.0f) - (float)ScreenHeight() / ((float)fDistanceToWall));
 			int nFloor = ScreenHeight() - nCeiling;
 
 			for (int y = 0; y < ScreenHeight(); y++)
