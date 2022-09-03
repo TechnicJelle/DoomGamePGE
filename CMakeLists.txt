@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 3.10)
 #
 #   - dictates the output executable filename
 #
-project(TestApp)
+project(DoomGame)
 
 # Options you can set via command-line
-option(HAS_TERMINAL "Show a terminal window for STDOUT/STDERR" ON)
+option(HAS_TERMINAL   "Show a terminal window for STDOUT/STDERR" ON)
 option(USE_ALSA       "Force using ALSA as audio backend (Linux-only)")
 option(USE_PULSEAUDIO "Force using PulseAudio as audio backend (Linux-only)")
 option(USE_SDL2_MIXER "Force using SDL2_mixer as audio backend")
