@@ -5,6 +5,17 @@
 //using am = AssetManager;
 
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "ConstantParameter"
+
+[[maybe_unused]] static float Map(float value, float start1, float stop1, float start2, float stop2)
+{
+	return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+}
+
+#pragma clang diagnostic pop
+
+
 class DoomGame : public olc::PixelGameEngine
 {
 public:
@@ -51,10 +62,18 @@ public:
 		nLayerBackground = CreateLayer();
 		SetDrawTarget(nLayerBackground);
 		Clear(olc::BLACK);
-		for (int y = ScreenHeight() / 2; y < ScreenHeight(); y++)
+		for (int y = 0; y < ScreenHeight(); y++)
 		{
-			float fCol = (float)y / ((float)ScreenHeight() / 2.0f);
-			DrawLine(0, y, ScreenWidth(), y, olc::PixelF(0, 0, fCol));
+			if (y < ScreenHeight() / 2)
+			{
+				float fac = std::clamp(Map((float)y, 0.0f, (float)ScreenHeight(), 1.0f, -3.0f), 0.0f, 1.0f);
+				DrawLine(0, y, ScreenWidth(), y, olc::PixelF(0, 0.6f * fac, fac));
+			}
+			else
+			{
+				float fac = std::clamp(Map((float)y, 0.0f, (float)ScreenHeight(), -300.0f, 64.0f), 0.0f, 255.0f);
+				DrawLine(0, y, ScreenWidth(), y, olc::Pixel(fac, fac, fac));
+			}
 		}
 
 		EnableLayer(nLayerBackground, true);
@@ -108,7 +127,7 @@ public:
 
 			while (!bHitWall && fDistanceToWall < fDepth)
 			{
-				fDistanceToWall += 0.1f;
+				fDistanceToWall += 0.01f;
 
 				int nTestX = (int)(fPlayerX + fEyeX * fDistanceToWall);
 				int nTestY = (int)(fPlayerY + fEyeY * fDistanceToWall);
@@ -147,9 +166,8 @@ public:
 int main()
 {
 	DoomGame game;
-	if (game.Construct(320, 180, 4, 4))
+	if (game.Construct(1280, 720, 1, 1))
 		game.Start();
 
 	return 0;
 }
-
