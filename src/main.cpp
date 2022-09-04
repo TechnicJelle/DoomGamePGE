@@ -1,4 +1,5 @@
 #include "olcPixelGameEngine.h"
+#include "Level.h"
 //#include "olcSoundWaveEngine.h"
 //#include "AssetManager.h"
 
@@ -25,14 +26,10 @@ public:
 	}
 
 private:
-	float fPlayerX = 8.0f;
-	float fPlayerY = 8.0f;
-	float fPlayerA = 0.0f;
-
 	int nMapWidth = 16;
 	int nMapHeight = 16;
 
-	std::wstring map;
+	Level level;
 
 	float fFOV = 3.14159f / 4.0f;
 	float fDepth = 16.0f;
@@ -42,23 +39,30 @@ private:
 public:
 	bool OnUserCreate() override
 	{
-		map += L"################";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"#..............#";
-		map += L"################";
+#pragma region Level Init
+		std::string map;
+		map += "################";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "#..............#";
+		map += "################";
+		level = Level(this, nMapWidth, nMapHeight, map);
 
+		level.Print();
+#pragma endregion Level Init
+
+#pragma region Background
 		nLayerBackground = CreateLayer();
 		SetDrawTarget(nLayerBackground);
 		Clear(olc::BLACK);
@@ -71,14 +75,14 @@ public:
 			}
 			else
 			{
-				float fac = std::clamp(Map((float)y, 0.0f, (float)ScreenHeight(), -300.0f, 64.0f), 0.0f, 255.0f);
-				DrawLine(0, y, ScreenWidth(), y, olc::Pixel(fac, fac, fac));
+				int brightness = (int)std::clamp(Map((float)y, 0.0f, (float)ScreenHeight(), -300.0f, 64.0f), 0.0f, 255.0f);
+				DrawLine(0, y, ScreenWidth(), y, olc::Pixel(brightness, brightness, brightness));
 			}
 		}
 
 		EnableLayer(nLayerBackground, true);
 		SetDrawTarget(nullptr);
-
+#pragma endregion Background
 		return true;
 	}
 
@@ -86,30 +90,6 @@ public:
 	{
 		if (GetKey(olc::Key::ESCAPE).bPressed)
 			return false;
-		if (GetKey(olc::Key::A).bHeld)
-			fPlayerA -= 1.0f * fElapsedTime;
-		if (GetKey(olc::Key::D).bHeld)
-			fPlayerA += 1.0f * fElapsedTime;
-		if (GetKey(olc::Key::W).bHeld)
-		{
-			fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
-			fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
-			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#')
-			{
-				fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
-				fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
-			}
-		}
-		if (GetKey(olc::Key::S).bHeld)
-		{
-			fPlayerX -= sinf(fPlayerA) * 5.0f * fElapsedTime;
-			fPlayerY -= cosf(fPlayerA) * 5.0f * fElapsedTime;
-			if (map[(int)fPlayerY * nMapWidth + (int)fPlayerX] == '#')
-			{
-				fPlayerX += sinf(fPlayerA) * 5.0f * fElapsedTime;
-				fPlayerY += cosf(fPlayerA) * 5.0f * fElapsedTime;
-			}
-		}
 
 #pragma region Rendering
 		Clear(olc::BLANK);
